@@ -16,10 +16,11 @@ void cleanColour() {
 void hsvLoop(void *pvParameters) {
   for (;;) {
     for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CHSV(s.led.pot1, s.led.pot2, 255);
+      leds[i] = CHSV(s.led.pot1, 255, 255);
     }
+    FastLED.setBrightness(s.led.brightness);
     FastLED.show();
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }
 
@@ -27,10 +28,11 @@ void rgbLoop(void *pvParameters) {
   Serial.println("Starting rgb");
   for (;;) {
     for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CRGB(s.led.pot1, s.led.pot2, 123);
+      leds[i] = CRGB(s.led.pot1, 174, 123);
     }
+    FastLED.setBrightness(s.led.brightness);
     FastLED.show();
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }
 
@@ -56,17 +58,16 @@ void led(void *pvParameters) {
           vTaskDelete(rgbHandle);
           rgbHandle = NULL;
         }
-
+        FastLED.setBrightness(255);
+        FastLED.clear(true);
+        cleanColour();
         switch (newState.led.mode) {
           case OFF:
-            cleanColour();
             break;
           case HSV_MODE:
-            cleanColour();
             xTaskCreate(hsvLoop, "hsv", 2048, NULL, 2, &hsvHandle);
             break;
           case RGB_MODE:
-            cleanColour();
             xTaskCreate(rgbLoop, "rgb", 2048, NULL, 2, &rgbHandle);
             break;
           default:

@@ -25,15 +25,16 @@ state readState() {
   long raw1 = adc0.readADC(1);
   long raw2 = adc0.readADC(2);
   long raw3 = adc0.readADC(3);
-  long raw4 = adc0.readADC(3);
+  long raw4 = adc1.readADC(0);
 
   long mapped0 = mapValue(raw0, 0, 3);
   long mapped1 = mapValue(raw1, 0, 256);
   long mapped2 = mapValue(raw2, 0, 256);
   long mapped3 = mapValue(raw3, 0, 256);
-  long mapped4 = mapValue(raw3, 0, 256);
+  long mapped4 = mapValue(raw4, 0, 256);
+
   return {{static_cast<ledMode>(mapped0), mapped1, mapped2, mapped3, mapped4},
-          {raw0, raw1, raw2, raw3}};
+          {raw0, raw1, raw2, raw3, raw4}};
 }
 
 void loop(void *pvParameters) {
