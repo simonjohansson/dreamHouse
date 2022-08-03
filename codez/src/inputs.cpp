@@ -9,11 +9,11 @@ long mapValue(long value, int min, int max) {
   if (value < 0) {
     v = 0;
   }
-  if (value > 26370) {
-    v = 26379;
+  if (value > 27809) {
+    v = 27809;
   }
 
-  long mapped = map(v, 0, 26370, min, max);
+  long mapped = map(v, 0, 27809, min, max);
   if (mapped > max - 1) {
     return max - 1;
   }
@@ -53,7 +53,6 @@ void readADCs(QueueHandle_t queue) {
   q = queue;
 
   adc0.begin();
-  adc0.setGain(1);
   adc0.setDataRate(7);
 
   xTaskCreate(loop, "loop", 2048, NULL, 2, NULL);
