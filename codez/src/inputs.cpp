@@ -49,11 +49,13 @@ void loop(void *pvParameters) {
   }
 }
 
-void readADCs(QueueHandle_t queue) {
-  q = queue;
+QueueHandle_t readADCs() {
+  q = xQueueCreate(1, sizeof(struct state));
 
   adc0.begin();
   adc0.setDataRate(7);
 
   xTaskCreate(loop, "loop", 2048, NULL, 2, NULL);
+
+  return q;
 }

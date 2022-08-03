@@ -7,6 +7,6 @@
 
 #include "ADS1X15.h"
 
-void readADCs(QueueHandle_t queue);
+QueueHandle_t readADCs();
 
 #endif
