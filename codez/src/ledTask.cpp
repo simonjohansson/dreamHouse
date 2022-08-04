@@ -40,8 +40,7 @@ void led(void *pvParameters) {
   cleanColour();
 
   int numHandles = 2;
-  TaskHandle_t hsvHandle = NULL;
-  TaskHandle_t rgbHandle = NULL;
+  TaskHandle_t loopHandle = NULL;
   state oldState;
   for (;;) {
     state newState;
@@ -50,13 +49,9 @@ void led(void *pvParameters) {
         s = newState;
       }
       if (newState.led.mode != oldState.led.mode) {
-        if (hsvHandle != NULL) {
-          vTaskDelete(hsvHandle);
-          hsvHandle = NULL;
-        }
-        if (rgbHandle != NULL) {
-          vTaskDelete(rgbHandle);
-          rgbHandle = NULL;
+        if (loopHandle != NULL) {
+          vTaskDelete(loopHandle);
+          loopHandle = NULL;
         }
         FastLED.setBrightness(255);
         FastLED.clear(true);
@@ -65,10 +60,10 @@ void led(void *pvParameters) {
           case OFF:
             break;
           case HSV_MODE:
-            xTaskCreate(hsvLoop, "hsv", 2048, NULL, 2, &hsvHandle);
+            xTaskCreate(hsvLoop, "hsv", 2048, NULL, 2, &loopHandle);
             break;
           case RGB_MODE:
-            xTaskCreate(rgbLoop, "rgb", 2048, NULL, 2, &rgbHandle);
+            xTaskCreate(rgbLoop, "rgb", 2048, NULL, 2, &loopHandle);
             break;
           default:
             break;
