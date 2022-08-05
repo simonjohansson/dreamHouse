@@ -13,17 +13,17 @@ void cleanColour() {
     FastLED.show();
 }
 
-void hsvLoop(void *pvParameters) {
-    log_i("Starting");
-    for (;;) {
-        for (int i = 0; i < NUM_LEDS; i++) {
-            leds[i] = CHSV(s.led.pot1, 255, 255);
-        }
-        FastLED.setBrightness(s.led.brightness);
-        FastLED.show();
-        vTaskDelay(50 / portTICK_PERIOD_MS);
-    }
-}
+// void hsvLoop(void *pvParameters) {
+//     log_i("Starting");
+//     for (;;) {
+//         for (int i = 0; i < NUM_LEDS; i++) {
+//             leds[i] = CHSV(s.led.pot1, 255, 255);
+//         }
+//         FastLED.setBrightness(s.led.brightness);
+//         FastLED.show();
+//         vTaskDelay(50 / portTICK_PERIOD_MS);
+//     }
+// }
 
 void rgbLoop(void *pvParameters) {
     log_i("Starting");
@@ -40,7 +40,6 @@ void rgbLoop(void *pvParameters) {
 void led(void *pvParameters) {
     cleanColour();
 
-    int numHandles = 2;
     TaskHandle_t loopHandle = NULL;
     state oldState;
     for (;;) {
@@ -61,7 +60,7 @@ void led(void *pvParameters) {
                 case OFF:
                     break;
                 case HSV_MODE:
-                    xTaskCreate(hsvLoop, "hsv", 2048, NULL, 2, &loopHandle);
+                    // xTaskCreate(hsvLoop, "hsv", 2048, NULL, 2, &loopHandle);
                     break;
                 case RGB_MODE:
                     xTaskCreate(rgbLoop, "rgb", 2048, NULL, 2, &loopHandle);
