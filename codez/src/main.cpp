@@ -13,27 +13,21 @@
 Preferences preferences;
 
 void setup() {
-  Serial.begin(115200);
-  preferences.begin(PREFERENCES_KEY, false);
-  pinMode(CALIBRATION_PIN, INPUT);
+    Serial.begin(115200);
+    preferences.begin(PREFERENCES_KEY, false);
+    pinMode(CALIBRATION_PIN, INPUT);
+    vTaskDelay(500 / portTICK_RATE_MS);
+    if (!preferences.getBool(CALIBRATION_KEY, false) || digitalRead(CALIBRATION_PIN) == HIGH) {
+        calibrate();
+    } else {
+        log_i("Calibrated values: %d, %d, %d, %d, %d, %d, %d, %d", preferences.getLong("pot0"), preferences.getLong("pot1"), preferences.getLong("pot2"),
+              preferences.getLong("pot3"), preferences.getLong("pot4"), preferences.getLong("pot5"), preferences.getLong("pot6"), preferences.getLong("pot7"));
 
-  vTaskDelay(500 / portTICK_RATE_MS);
-
-  if (!preferences.getBool(CALIBRATION_KEY, false) ||
-      digitalRead(CALIBRATION_PIN) == HIGH) {
-    calibrate();
-  } else {
-    Serial.println("Calibrated values:");
-    Serial.printf("%d, %d, %d, %d, %d, %d, %d, %d\n",
-                  preferences.getLong("pot0"), preferences.getLong("pot1"),
-                  preferences.getLong("pot2"), preferences.getLong("pot3"),
-                  preferences.getLong("pot4"), preferences.getLong("pot5"),
-                  preferences.getLong("pot6"), preferences.getLong("pot7"));
-    QueueHandle_t eventQueue = readADCs();
-    QueueHandle_t printQueue = printLoop();
-    QueueHandle_t ledQueue = ledLoop();
-    multiplex(eventQueue, printQueue, ledQueue);
-  }
+        QueueHandle_t eventQueue = readADCs();
+        QueueHandle_t printQueue = printLoop();
+        QueueHandle_t ledQueue = ledLoop();
+        multiplex(eventQueue, printQueue, ledQueue);
+    }
 }
 
 void loop() {}
