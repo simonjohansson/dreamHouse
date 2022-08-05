@@ -14,6 +14,7 @@ void cleanColour() {
 }
 
 void hsvLoop(void *pvParameters) {
+  Serial.println("Starting hsv");
   for (;;) {
     for (int i = 0; i < NUM_LEDS; i++) {
       leds[i] = CHSV(s.led.pot1, 255, 255);
