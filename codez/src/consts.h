@@ -11,4 +11,9 @@
 #define CALIBRATION_KEY "calibrated"
 #define CALIBRATION_PIN 15
 
+#define OLED_WIDTH 128
+#define OLED_HEIGHT 64
+#define OLED_RESET -1
+#define OLED_ADDRESS 0x3D
+
 #endif
