@@ -4,7 +4,7 @@ void Display::loop() {
     const char *stateStr[] = {"Off", "HSV", "RGB"};
 
     oled_->clearDisplay();
-    oled_->setTextSize(2);              // Normal 1:1 pixel scale
+    oled_->setTextSize(2, 2);           // Normal 1:1 pixel scale
     oled_->setTextColor(SSD1306_WHITE); // Draw white text
     oled_->display();
 
@@ -14,10 +14,6 @@ void Display::loop() {
             oled_->clearDisplay();
             oled_->setCursor(0, 0);
             oled_->printf("%s\n%d, %d, %d\nBr: %d", stateStr[newState.led.mode], newState.led.pot1, 255, 255, newState.led.brightness);
-            // oled_->setCursor(0, 16);
-            // oled_->println("G(255)");
-            // oled_->setCursor(0, 32);
-            // oled_->println("B(255)");
             oled_->display();
         }
     }

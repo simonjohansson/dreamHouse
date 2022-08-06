@@ -7,7 +7,6 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <consts.h>
-#include <ledTask.h>
 #include <tasks/calibrator.h>
 #include <tasks/display.h>
 #include <tasks/ledStrip.h>
@@ -33,6 +32,8 @@ QueueHandle_t displayQueue;
 
 Adafruit_SSD1306 *oled;
 
+CRGB leds[NUM_LEDS];
+
 void setup() {
     Serial.begin(115200);
 
@@ -48,6 +49,8 @@ void setup() {
 
     oled = new Adafruit_SSD1306(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET);
     oled->begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS);
+
+    FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
 
     eventQueue = xQueueCreate(1, sizeof(struct state));
     printQueue = xQueueCreate(1, sizeof(struct state));
@@ -66,7 +69,7 @@ void setup() {
         reader = new Reader(eventQueue, adc0, adc1, preferences);
         multiplexer = new Multiplexer(eventQueue, printQueue, ledQueue, displayQueue);
         printer = new Printer(printQueue);
-        ledStrip = new LedStrip(ledQueue);
+        ledStrip = new LedStrip(ledQueue, leds);
         display = new Display(displayQueue, oled);
 
         printer->start();

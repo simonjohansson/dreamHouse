@@ -34,8 +34,8 @@ struct state {
     String printable() {
         char buffer[80];
         sprintf(buffer,
-                "mode: %d (%d) pot1: %d (%d) pot2: %d (%d) pot3: %d (%d) "
-                "brightness: %d (%d)",
+                "mode: %d (%d) p1: %d (%d) p2: %d (%d) p3: %d (%d) "
+                "bright: %d (%d)",
                 led.mode, raw.pot1, led.pot1, raw.pot2, led.pot2, raw.pot3, led.pot3, raw.pot4, led.brightness, raw.pot5);
         return buffer;
     }

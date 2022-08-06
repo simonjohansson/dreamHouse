@@ -8,13 +8,13 @@
 class LedStrip {
   private:
     QueueHandle_t queue_;
-    state state_;
+    CRGB *leds_;
 
     static void startLoop(void *pvParams);
     void loop();
 
   public:
-    LedStrip(QueueHandle_t queue);
+    LedStrip(QueueHandle_t queue, CRGB leds[]);
     void start();
 };
 
