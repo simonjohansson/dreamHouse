@@ -2,7 +2,7 @@
 
 void Printer::loop() {
     for (;;) {
-        state newState;
+        State newState;
         if (xQueueReceive(queue_, &newState, portMAX_DELAY) == pdPASS) {
             log_i("%s", newState.printable().c_str());
         }

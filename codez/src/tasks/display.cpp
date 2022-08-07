@@ -9,7 +9,7 @@ void Display::loop() {
     oled_->display();
 
     for (;;) {
-        state newState;
+        State newState;
         if (xQueueReceive(queue_, &newState, portMAX_DELAY) == pdPASS) {
             oled_->clearDisplay();
             oled_->setCursor(0, 0);

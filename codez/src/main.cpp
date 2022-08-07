@@ -52,10 +52,10 @@ void setup() {
 
     FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
 
-    eventQueue = xQueueCreate(1, sizeof(struct state));
-    printQueue = xQueueCreate(1, sizeof(struct state));
-    ledQueue = xQueueCreate(1, sizeof(struct state));
-    displayQueue = xQueueCreate(1, sizeof(struct state));
+    eventQueue = xQueueCreate(1, sizeof(struct State));
+    printQueue = xQueueCreate(1, sizeof(struct State));
+    ledQueue = xQueueCreate(1, sizeof(struct State));
+    displayQueue = xQueueCreate(1, sizeof(struct State));
 
     vTaskDelay(500 / portTICK_RATE_MS);
     if (!preferences->getBool(CALIBRATION_KEY, false) || digitalRead(CALIBRATION_PIN) == HIGH) {

@@ -3,33 +3,33 @@
 
 #include <Arduino.h>
 
-struct rawValues {
+struct RawValues {
     long pot1, pot2, pot3, pot4, pot5;
 
-    bool operator==(const rawValues &other) const {
+    bool operator==(const RawValues &other) const {
         return this->pot1 == other.pot1 && this->pot2 == other.pot2 && this->pot3 == other.pot3 && this->pot4 == other.pot4 && this->pot4 == other.pot5;
     }
-    bool operator!=(const rawValues &other) const { return !(*this == other); }
+    bool operator!=(const RawValues &other) const { return !(*this == other); }
 };
 
-enum ledMode { OFF, HSV_MODE, RGB_MODE };
+enum LedMode { OFF, HSV_MODE, RGB_MODE };
 
-struct ledState {
-    ledMode mode;
+struct LedState {
+    LedMode mode;
     long pot1, pot2, pot3;
     long brightness;
 
-    bool operator==(const ledState &other) const {
+    bool operator==(const LedState &other) const {
         return this->mode == other.mode && this->pot1 == other.pot1 && this->pot2 == other.pot2 && this->pot3 == other.pot3 &&
                this->brightness == other.brightness;
     }
 
-    bool operator!=(const ledState &other) const { return !(*this == other); }
+    bool operator!=(const LedState &other) const { return !(*this == other); }
 };
 
-struct state {
-    ledState led;
-    rawValues raw;
+struct State {
+    LedState led;
+    RawValues raw;
 
     String printable() {
         char buffer[80];
@@ -40,9 +40,9 @@ struct state {
         return buffer;
     }
 
-    bool operator==(const state &other) const { return this->led == other.led; }
+    bool operator==(const State &other) const { return this->led == other.led; }
 
-    bool operator!=(const state &other) const { return !(*this == other); }
+    bool operator!=(const State &other) const { return !(*this == other); }
 };
 
 #endif
