@@ -9,7 +9,7 @@ class LedStrip {
   private:
     QueueHandle_t queue_;
     CRGB *leds_;
-    State state;
+    State state_;
 
     void rgb();
     static void startRGB(void *pvParams);
