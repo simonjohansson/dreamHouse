@@ -11,6 +11,9 @@ class LedStrip {
     CRGB *leds_;
     State state_;
 
+    void scan();
+    static void startScan(void *pvParams);
+
     void rgb();
     static void startRGB(void *pvParams);
 

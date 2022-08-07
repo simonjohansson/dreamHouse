@@ -23,7 +23,7 @@ State Reader::readState() {
     long raw3 = adc0_.readADC(3);
     long raw4 = adc1_.readADC(0);
 
-    long mapped0 = mapValue(raw0, pot0MaxValue_, 0, 3);
+    long mapped0 = mapValue(raw0, pot0MaxValue_, 0, 4);
     long mapped1 = mapValue(raw1, pot1MaxValue_, 0, 256);
     long mapped2 = mapValue(raw2, pot2MaxValue_, 0, 256);
     long mapped3 = mapValue(raw3, pot3MaxValue_, 0, 256);

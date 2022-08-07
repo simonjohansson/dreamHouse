@@ -12,7 +12,7 @@ struct RawValues {
     bool operator!=(const RawValues &other) const { return !(*this == other); }
 };
 
-enum LedMode { OFF, HSV_MODE, RGB_MODE };
+enum LedMode { OFF, HSV_MODE, RGB_MODE, SCAN_MODE };
 
 struct LedState {
     LedMode mode;

@@ -2,10 +2,9 @@
 
 void Display::loop() {
     oled_->clearDisplay();
-    oled_->setTextSize(2, 2);           // Normal 1:1 pixel scale
     oled_->setTextColor(SSD1306_WHITE); // Draw white text
     oled_->display();
-
+    oled_->setTextSize(2);
     for (;;) {
         State newState;
         if (xQueueReceive(queue_, &newState, portMAX_DELAY) == pdPASS) {
@@ -16,10 +15,13 @@ void Display::loop() {
                 oled_->printf("Lights off\n");
                 break;
             case HSV_MODE:
-                oled_->printf("HSV\nH(%d)\nS(%d)\nV(%d)\n", newState.led.pot1, 255, newState.led.brightness);
+                oled_->printf("HSV\n%d, %d, %d", newState.led.pot1, newState.led.pot2, newState.led.brightness);
                 break;
             case RGB_MODE:
-                oled_->printf("RGB\nR(%d)\tB(%d)\nG(%d)\nB(%d)", newState.led.pot1, newState.led.brightness, newState.led.pot2, newState.led.pot3);
+                oled_->printf("RGB\nR %d, %d, %d\nBrightness %d", newState.led.pot1, newState.led.pot2, newState.led.pot3, newState.led.brightness);
+                break;
+            case SCAN_MODE:
+                oled_->printf("Scan\nSpeed %d%%", map(newState.led.pot1, 0, 255, 0, 100));
                 break;
             default:
                 break;
