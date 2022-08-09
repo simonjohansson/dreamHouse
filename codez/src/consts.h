@@ -4,7 +4,7 @@
 #define ADC0 0x48
 #define ADC1 0x49
 
-#define NUM_LEDS 3
+#define NUM_LEDS 40
 #define LED_PIN 14
 
 #define PREFERENCES_KEY "dreamHouse"

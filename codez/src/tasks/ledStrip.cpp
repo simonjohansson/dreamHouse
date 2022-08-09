@@ -1,5 +1,37 @@
 #include "ledStrip.h"
 
+void LedStrip::random() {
+    log_i("Random Mode");
+
+    for (;;) {
+        std::vector<int> black = {};
+        std::vector<int> withColour = {};
+
+        for (int i = 0; i < NUM_LEDS; i++) {
+            if (leds_[i]) {
+                withColour.push_back(i);
+            } else {
+                black.push_back(i);
+            }
+        }
+
+        for (const auto &value : withColour) {
+            leds_[value].fadeToBlackBy(1);
+        }
+
+        std::random_shuffle(black.begin(), black.end());
+        black.resize(5 - withColour.size());
+        for (const auto &value : black) {
+            if (((rand() % 5) + 1) % 5 == 0) {
+                leds_[value] = CRGB((rand() % 256), (rand() % 256), (rand() % 256));
+            }
+        }
+
+        FastLED.show();
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+}
+
 void LedStrip::scan() {
     log_i("Scan Mode");
     FastLED.clear(true);
@@ -72,10 +104,10 @@ void LedStrip::loop() {
                 if (handle != NULL) {
                     vTaskDelete(handle);
                     handle = NULL;
+                    FastLED.clear(true);
                 }
                 switch (newState.led.mode) {
                 case OFF:
-                    FastLED.clear(true);
                     break;
                 case HSV_MODE:
                     xTaskCreate(LedStrip::startHSV, "HSVLoop", 2048, this, 1, &handle);
@@ -86,6 +118,9 @@ void LedStrip::loop() {
                 case SCAN_MODE:
                     xTaskCreate(LedStrip::startScan, "ScanLoop", 2048, this, 1, &handle);
                     break;
+                case RANDOM_MODE:
+                    xTaskCreate(LedStrip::startRandom, "RandomLoop", 2048, this, 1, &handle);
+                    break;
                 default:
                     break;
                 }
@@ -95,6 +130,7 @@ void LedStrip::loop() {
     }
 }
 
+void LedStrip::startRandom(void *_this) { ((LedStrip *)_this)->random(); }
 void LedStrip::startScan(void *_this) { ((LedStrip *)_this)->scan(); }
 void LedStrip::startHSV(void *_this) { ((LedStrip *)_this)->hsv(); }
 void LedStrip::startRGB(void *_this) { ((LedStrip *)_this)->rgb(); }

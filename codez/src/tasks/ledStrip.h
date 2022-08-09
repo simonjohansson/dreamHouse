@@ -2,14 +2,19 @@
 #define LEDSTRIP_TASK
 #include <Arduino.h>
 #include <FastLED.h>
+#include <algorithm>
 #include <consts.h>
 #include <datastructures.h>
+#include <vector>
 
 class LedStrip {
   private:
     QueueHandle_t queue_;
     CRGB *leds_;
     State state_;
+
+    void random();
+    static void startRandom(void *pvParams);
 
     void scan();
     static void startScan(void *pvParams);

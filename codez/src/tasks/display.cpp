@@ -23,6 +23,9 @@ void Display::loop() {
             case SCAN_MODE:
                 oled_->printf("Scan\nSpeed %d%%", map(newState.led.pot1, 0, 255, 0, 100));
                 break;
+            case RANDOM_MODE:
+                oled_->printf("Random");
+                break;
             default:
                 break;
             }
