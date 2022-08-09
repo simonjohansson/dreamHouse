@@ -5,8 +5,11 @@
 #include <FastLED.h>
 #include <Preferences.h>
 #include <SPI.h>
+#include <WiFi.h>
 #include <Wire.h>
 #include <consts.h>
+#include <datastructures.h>
+#include <secrets.h>
 #include <tasks/calibrator.h>
 #include <tasks/display.h>
 #include <tasks/ledStrip.h>
@@ -37,6 +40,9 @@ CRGB leds[NUM_LEDS];
 void setup() {
     Serial.begin(115200);
 
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
     preferences = new Preferences();
     preferences->begin(PREFERENCES_KEY, false);
 
@@ -52,10 +58,10 @@ void setup() {
 
     FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
 
-    eventQueue = xQueueCreate(1, sizeof(struct State));
-    printQueue = xQueueCreate(1, sizeof(struct State));
-    ledQueue = xQueueCreate(1, sizeof(struct State));
-    displayQueue = xQueueCreate(1, sizeof(struct State));
+    eventQueue = xQueueCreate(1, sizeof(struct PotState));
+    printQueue = xQueueCreate(1, sizeof(struct PotState));
+    ledQueue = xQueueCreate(1, sizeof(struct PotState));
+    displayQueue = xQueueCreate(1, sizeof(struct PotState));
 
     vTaskDelay(500 / portTICK_RATE_MS);
     if (!preferences->getBool(CALIBRATION_KEY, false) || digitalRead(CALIBRATION_PIN) == HIGH) {

@@ -14,7 +14,7 @@ class Reader {
     ADS1115 adc1_;
     long pot0MaxValue_, pot1MaxValue_, pot2MaxValue_, pot3MaxValue_, pot4MaxValue_, pot5MaxValue_, pot6MaxValue_, pot7MaxValue_;
 
-    State readState();
+    PotState readState();
     long mapValue(long value, long potMaxValue, int min, int max);
     static void startLoop(void *pvParams);
     void loop();

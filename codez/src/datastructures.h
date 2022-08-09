@@ -27,7 +27,7 @@ struct LedState {
     bool operator!=(const LedState &other) const { return !(*this == other); }
 };
 
-struct State {
+struct PotState {
     LedState led;
     RawValues raw;
 
@@ -40,9 +40,9 @@ struct State {
         return buffer;
     }
 
-    bool operator==(const State &other) const { return this->led == other.led; }
+    bool operator==(const PotState &other) const { return this->led == other.led; }
 
-    bool operator!=(const State &other) const { return !(*this == other); }
+    bool operator!=(const PotState &other) const { return !(*this == other); }
 };
 
 #endif

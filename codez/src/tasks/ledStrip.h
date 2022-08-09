@@ -12,7 +12,7 @@ class LedStrip {
     QueueHandle_t queue_;
     SemaphoreHandle_t lock_;
     CRGB *leds_;
-    State state_;
+    PotState state_;
 
     void trace();
     static void startTrace(void *pvParams);

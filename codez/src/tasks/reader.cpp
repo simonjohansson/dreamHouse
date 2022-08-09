@@ -16,7 +16,7 @@ long Reader::mapValue(long value, long potMaxValue, int min, int max) {
     return mapped;
 }
 
-State Reader::readState() {
+PotState Reader::readState() {
     long raw0 = adc0_.readADC(0);
     long raw1 = adc0_.readADC(1);
     long raw2 = adc0_.readADC(2);
@@ -33,11 +33,11 @@ State Reader::readState() {
 }
 
 void Reader::loop() {
-    State currentState = readState();
+    PotState currentState = readState();
     xQueueOverwrite(queue_, &currentState);
 
     for (;;) {
-        State newState = readState();
+        PotState newState = readState();
         if (newState != currentState) {
             xQueueOverwrite(queue_, &newState);
             currentState = newState;

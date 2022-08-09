@@ -46,8 +46,8 @@ void LedStrip::random() {
         std::random_shuffle(black.begin(), black.end());
         black.resize(5 - withColour.size());
         for (const auto &value : black) {
-            if (((rand() % 5) + 1) % 5 == 0) {
-                leds_[value] = CRGB((rand() % 256), (rand() % 256), (rand() % 256));
+            if (((esp_random() % 5) + 1) % 5 == 0) {
+                leds_[value] = CRGB((esp_random() % 256), (esp_random() % 256), (esp_random() % 256));
             }
         }
         this->withLock([&]() { FastLED.show(); });
@@ -121,11 +121,11 @@ void LedStrip::withLock(const std::function<void()> &f) {
 }
 
 void LedStrip::loop() {
-    State oldState;
+    PotState oldState;
     TaskHandle_t handle = NULL;
 
     for (;;) {
-        State newState;
+        PotState newState;
         if (xQueueReceive(queue_, &newState, portMAX_DELAY) == pdPASS) {
             state_ = newState;
 

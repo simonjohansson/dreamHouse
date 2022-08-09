@@ -2,7 +2,7 @@
 
 void Multiplexer::loop() {
     for (;;) {
-        State state;
+        PotState state;
         if (xQueueReceive(input_, &state, portMAX_DELAY) == pdPASS) {
             xQueueOverwrite(output1_, &state);
             xQueueOverwrite(output2_, &state);
