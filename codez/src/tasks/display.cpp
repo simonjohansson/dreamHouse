@@ -26,6 +26,9 @@ void Display::loop() {
             case RANDOM_MODE:
                 oled_->printf("Random");
                 break;
+            case TRACE_MODE:
+                oled_->printf("Trace");
+                break;
             default:
                 break;
             }

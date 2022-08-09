@@ -10,8 +10,12 @@
 class LedStrip {
   private:
     QueueHandle_t queue_;
+    SemaphoreHandle_t lock_;
     CRGB *leds_;
     State state_;
+
+    void trace();
+    static void startTrace(void *pvParams);
 
     void random();
     static void startRandom(void *pvParams);
@@ -27,6 +31,8 @@ class LedStrip {
 
     static void startLoop(void *pvParams);
     void loop();
+
+    void withLock(const std::function<void()> &f);
 
   public:
     LedStrip(QueueHandle_t queue, CRGB leds[]);
