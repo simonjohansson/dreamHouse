@@ -9,18 +9,18 @@ void LedStrip::trace() {
         for (int j = 0; j <= i; j++) {
             leds_[j] = CRGB::Purple;
             for (int k = j; k >= 0; k--) {
-                leds_[k].fadeToBlackBy(64);
+                leds_[k].fadeToBlackBy(16);
             }
         }
-        for (int j = i + 1; j < NUM_LEDS; j++) {
-            leds_[j].fadeToBlackBy(64);
+        for (int j = i + 1; j < NUM_LEDS * NUM_STRIPS; j++) {
+            leds_[j].fadeToBlackBy(16);
         }
         this->withLock([&]() { FastLED.show(); });
         i++;
-        if (i > NUM_LEDS) {
+        if (i > NUM_LEDS * NUM_STRIPS) {
             i = 0;
         }
-        vTaskDelay(50 / portTICK_PERIOD_MS);
+        vTaskDelay(20 / portTICK_PERIOD_MS);
     }
 }
 
@@ -31,7 +31,7 @@ void LedStrip::random() {
         std::vector<int> black = {};
         std::vector<int> withColour = {};
 
-        for (int i = 0; i < NUM_LEDS; i++) {
+        for (int i = 0; i < NUM_LEDS * NUM_STRIPS; i++) {
             if (leds_[i]) {
                 withColour.push_back(i);
             } else {
@@ -44,7 +44,7 @@ void LedStrip::random() {
         }
 
         std::random_shuffle(black.begin(), black.end());
-        black.resize(5 - withColour.size());
+        black.resize(20 - withColour.size());
         for (const auto &value : black) {
             if (((esp_random() % 5) + 1) % 5 == 0) {
                 leds_[value] = CRGB((esp_random() % 256), (esp_random() % 256), (esp_random() % 256));
@@ -63,8 +63,8 @@ void LedStrip::scan() {
     long s = 255;
     bool sIncrement = false;
     for (;;) {
-        for (int i = 0; i < NUM_LEDS; i++) {
-            leds_[i] = CHSV(h, s, state_.led.brightness);
+        for (int i = 0; i < NUM_LEDS * NUM_STRIPS; i++) {
+            leds_[i] = CHSV(h, s, 255);
         }
         this->withLock([&]() { FastLED.show(); });
         h++;
@@ -84,7 +84,7 @@ void LedStrip::scan() {
             s--;
         }
 
-        vTaskDelay(map(state_.led.pot1, 0, 255, 255, 0) / portTICK_RATE_MS);
+        vTaskDelay(20 / portTICK_RATE_MS);
     }
 }
 
@@ -92,7 +92,7 @@ void LedStrip::rgb() {
     log_i("RGB Mode");
     FastLED.clear(true);
     for (;;) {
-        for (int i = 0; i < NUM_LEDS; i++) {
+        for (int i = 0; i < NUM_LEDS * NUM_STRIPS; i++) {
             leds_[i] = CRGB(state_.led.pot1, state_.led.pot2, state_.led.pot3);
         }
         FastLED.setBrightness(state_.led.brightness);
@@ -106,7 +106,7 @@ void LedStrip::hsv() {
     FastLED.clear(true);
     FastLED.setBrightness(255);
     for (;;) {
-        for (int i = 0; i < NUM_LEDS; i++) {
+        for (int i = 0; i < NUM_LEDS * NUM_STRIPS; i++) {
             leds_[i] = CHSV(state_.led.pot1, state_.led.pot2, state_.led.brightness);
         }
         this->withLock([&]() { FastLED.show(); });

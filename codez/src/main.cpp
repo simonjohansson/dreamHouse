@@ -35,7 +35,7 @@ QueueHandle_t displayQueue;
 
 Adafruit_SSD1306 *oled;
 
-CRGB leds[NUM_LEDS];
+CRGB leds[NUM_LEDS * NUM_STRIPS];
 
 void setup() {
     Serial.begin(115200);
@@ -57,7 +57,9 @@ void setup() {
     oled = new Adafruit_SSD1306(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET);
     oled->begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS);
 
-    FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
+    FastLED.addLeds<NEOPIXEL, STRIP_PIN_1>(leds, NUM_LEDS, 0);
+    FastLED.addLeds<NEOPIXEL, STRIP_PIN_2>(leds, NUM_LEDS, NUM_LEDS);
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 200);
 
     eventQueue = xQueueCreate(1, sizeof(struct PotState));
     printQueue = xQueueCreate(1, sizeof(struct PotState));
@@ -65,26 +67,28 @@ void setup() {
     displayQueue = xQueueCreate(1, sizeof(struct PotState));
 
     vTaskDelay(500 / portTICK_RATE_MS);
-    if (!preferences->getBool(CALIBRATION_KEY, false) || digitalRead(CALIBRATION_PIN) == HIGH) {
-        calibrator = new Calibrator(adc0, adc1, preferences);
-        calibrator->calibrate();
-    } else {
-        log_i("Calibrated values: %d, %d, %d, %d, %d, %d, %d, %d", preferences->getLong("pot0"), preferences->getLong("pot1"), preferences->getLong("pot2"),
-              preferences->getLong("pot3"), preferences->getLong("pot4"), preferences->getLong("pot5"), preferences->getLong("pot6"),
-              preferences->getLong("pot7"));
+    // if (!preferences->getBool(CALIBRATION_KEY, false) || digitalRead(CALIBRATION_PIN) == HIGH) {
+    //     calibrator = new Calibrator(adc0, adc1, preferences);
+    //     calibrator->calibrate();
+    // } else {
+    log_i("Calibrated values: %d, %d, %d, %d, %d, %d, %d, %d", preferences->getLong("pot0"), preferences->getLong("pot1"), preferences->getLong("pot2"),
+          preferences->getLong("pot3"), preferences->getLong("pot4"), preferences->getLong("pot5"), preferences->getLong("pot6"), preferences->getLong("pot7"));
 
-        reader = new Reader(eventQueue, adc0, adc1, preferences);
-        multiplexer = new Multiplexer(eventQueue, printQueue, ledQueue, displayQueue);
-        printer = new Printer(printQueue);
-        ledStrip = new LedStrip(ledQueue, leds);
-        display = new Display(displayQueue, oled);
+    reader = new Reader(eventQueue, adc0, adc1, preferences);
+    multiplexer = new Multiplexer(eventQueue, printQueue, ledQueue, displayQueue);
+    printer = new Printer(printQueue);
+    ledStrip = new LedStrip(ledQueue, leds);
+    display = new Display(displayQueue, oled);
 
-        printer->start();
-        ledStrip->start();
-        display->start();
-        multiplexer->start();
-        reader->start();
-    }
+    printer->start();
+    ledStrip->start();
+    display->start();
+    multiplexer->start();
+    // reader->start();
+    // }
+
+    PotState ps = {{TRACE_MODE, 0, 0, 0}, {}};
+    xQueueSend(ledQueue, &ps, 0);
 }
 
 void loop() {}

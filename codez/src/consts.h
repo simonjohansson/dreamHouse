@@ -5,7 +5,9 @@
 #define ADC1 0x49
 
 #define NUM_LEDS 40
-#define LED_PIN 14
+#define NUM_STRIPS 2
+#define STRIP_PIN_1 25
+#define STRIP_PIN_2 26
 
 #define PREFERENCES_KEY "dreamHouse"
 #define CALIBRATION_KEY "calibrated"
