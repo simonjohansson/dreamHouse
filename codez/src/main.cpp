@@ -40,6 +40,7 @@ CRGB leds[NUM_LEDS];
 void setup() {
     Serial.begin(115200);
 
+    WiFi.setSleep(false);
     WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
