@@ -47,7 +47,7 @@ void Calibrator::calibration() {
 
 void Calibrator::startCalibration(void *_this) { ((Calibrator *)_this)->calibration(); }
 
-void Calibrator::calibrate() { xTaskCreate(Calibrator::startCalibration, "", 2048, this, 1, NULL); }
+void Calibrator::calibrate() { xTaskCreatePinnedToCore(Calibrator::startCalibration, "", 2048, this, 1, NULL, 0); }
 
 Calibrator::Calibrator(ADS1115 adc0, ADS1115 adc1, Preferences *preferences) {
     pref_ = preferences;

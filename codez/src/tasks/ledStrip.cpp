@@ -9,18 +9,18 @@ void LedStrip::trace() {
         for (int j = 0; j <= i; j++) {
             leds_[j] = CRGB::Purple;
             for (int k = j; k >= 0; k--) {
-                leds_[k].fadeToBlackBy(16);
+                leds_[k].fadeToBlackBy(8);
             }
         }
         for (int j = i + 1; j < NUM_LEDS * NUM_STRIPS; j++) {
-            leds_[j].fadeToBlackBy(16);
+            leds_[j].fadeToBlackBy(8);
         }
-        this->withLock([&]() { FastLED.show(); });
+        show();
         i++;
         if (i > NUM_LEDS * NUM_STRIPS) {
             i = 0;
         }
-        vTaskDelay(20 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
@@ -50,8 +50,8 @@ void LedStrip::random() {
                 leds_[value] = CRGB((esp_random() % 256), (esp_random() % 256), (esp_random() % 256));
             }
         }
-        this->withLock([&]() { FastLED.show(); });
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        show();
+        vTaskDelay(20 / portTICK_PERIOD_MS);
     }
 }
 
@@ -96,7 +96,7 @@ void LedStrip::rgb() {
             leds_[i] = CRGB(state_.led.pot1, state_.led.pot2, state_.led.pot3);
         }
         FastLED.setBrightness(state_.led.brightness);
-        this->withLock([&]() { FastLED.show(); });
+        show();
         vTaskDelay(50 / portTICK_RATE_MS);
     }
 }
@@ -109,7 +109,7 @@ void LedStrip::hsv() {
         for (int i = 0; i < NUM_LEDS * NUM_STRIPS; i++) {
             leds_[i] = CHSV(state_.led.pot1, state_.led.pot2, state_.led.brightness);
         }
-        this->withLock([&]() { FastLED.show(); });
+        show();
         vTaskDelay(50 / portTICK_RATE_MS);
     }
 }
@@ -118,6 +118,10 @@ void LedStrip::withLock(const std::function<void()> &f) {
     xSemaphoreTake(lock_, portMAX_DELAY);
     f();
     xSemaphoreGive(lock_);
+}
+
+void LedStrip::show() {
+    this->withLock([&]() { FastLED.show(); });
 }
 
 void LedStrip::loop() {
@@ -141,19 +145,19 @@ void LedStrip::loop() {
                 case OFF:
                     break;
                 case HSV_MODE:
-                    xTaskCreate(LedStrip::startHSV, "HSVLoop", 2048, this, 1, &handle);
+                    xTaskCreatePinnedToCore(LedStrip::startHSV, "HSVLoop", 2048, this, 4, &handle, 1);
                     break;
                 case RGB_MODE:
-                    xTaskCreate(LedStrip::startRGB, "RGBLoop", 2048, this, 1, &handle);
+                    xTaskCreatePinnedToCore(LedStrip::startRGB, "RGBLoop", 2048, this, 4, &handle, 1);
                     break;
                 case SCAN_MODE:
-                    xTaskCreate(LedStrip::startScan, "ScanLoop", 2048, this, 1, &handle);
+                    xTaskCreatePinnedToCore(LedStrip::startScan, "ScanLoop", 2048, this, 4, &handle, 1);
                     break;
                 case RANDOM_MODE:
-                    xTaskCreate(LedStrip::startRandom, "RandomLoop", 2048, this, 1, &handle);
+                    xTaskCreatePinnedToCore(LedStrip::startRandom, "RandomLoop", 2048, this, 4, &handle, 1);
                     break;
                 case TRACE_MODE:
-                    xTaskCreate(LedStrip::startTrace, "TraceLoop", 2048, this, 1, &handle);
+                    xTaskCreatePinnedToCore(LedStrip::startTrace, "TraceLoop", 2048, this, 4, &handle, 1);
                     break;
                 default:
                     break;
@@ -171,7 +175,7 @@ void LedStrip::startHSV(void *_this) { ((LedStrip *)_this)->hsv(); }
 void LedStrip::startRGB(void *_this) { ((LedStrip *)_this)->rgb(); }
 void LedStrip::startLoop(void *_this) { ((LedStrip *)_this)->loop(); }
 
-void LedStrip::start() { xTaskCreate(LedStrip::startLoop, "LedStripLoop", 2048, this, 1, NULL); }
+void LedStrip::start() { xTaskCreatePinnedToCore(LedStrip::startLoop, "LedStripLoop", 2048, this, 3, NULL, 1); }
 
 LedStrip::LedStrip(QueueHandle_t queue, CRGB leds[]) {
     queue_ = queue;

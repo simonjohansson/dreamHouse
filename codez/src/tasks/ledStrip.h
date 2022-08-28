@@ -33,6 +33,7 @@ class LedStrip {
     void loop();
 
     void withLock(const std::function<void()> &f);
+    void show();
 
   public:
     LedStrip(QueueHandle_t queue, CRGB leds[]);

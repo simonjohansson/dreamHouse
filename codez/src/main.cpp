@@ -57,9 +57,12 @@ void setup() {
     oled = new Adafruit_SSD1306(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET);
     oled->begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS);
 
-    FastLED.addLeds<NEOPIXEL, STRIP_PIN_1>(leds, NUM_LEDS, 0);
+    FastLED.addLeds<NEOPIXEL, STRIP_PIN_1>(leds, NUM_LEDS);
     FastLED.addLeds<NEOPIXEL, STRIP_PIN_2>(leds, NUM_LEDS, NUM_LEDS);
-    FastLED.setMaxPowerInVoltsAndMilliamps(5, 200);
+    FastLED.addLeds<NEOPIXEL, STRIP_PIN_3>(leds, NUM_LEDS * 2, NUM_LEDS);
+    FastLED.addLeds<NEOPIXEL, STRIP_PIN_4>(leds, NUM_LEDS * 3, NUM_LEDS);
+
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 5000);
 
     eventQueue = xQueueCreate(1, sizeof(struct PotState));
     printQueue = xQueueCreate(1, sizeof(struct PotState));
@@ -87,8 +90,8 @@ void setup() {
     // reader->start();
     // }
 
-    PotState ps = {{TRACE_MODE, 0, 0, 0}, {}};
-    xQueueSend(ledQueue, &ps, 0);
+    PotState ps = {{RANDOM_MODE, 255, 255, 255, 255}, {}};
+    xQueueSend(eventQueue, &ps, 0);
 }
 
 void loop() {}
